@@ -228,7 +228,7 @@ function update() {
     box(s.pos, 4);
   });*/
 
-  color("yellow");
+  /*color("yellow");
   rect(11.7*G.WIDTH/13, 14.9*G.HEIGHT/16, 1, 1)
   if (abs(1.4*G.WIDTH/13 - ball.x) < 4.9 && abs(3.1*G.HEIGHT/16 - ball.y) < 4.9) { //top-left
     end();
@@ -241,7 +241,7 @@ function update() {
   }
   else if (abs(11.7*G.WIDTH/13 - ball.x) < 4.9 && abs(14.9*G.HEIGHT/16 - ball.y) < 4.9) { //bottom-right
     end();
-  }
+  }*/
   
 }
 addEventListener("load", onLoad);
