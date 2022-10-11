@@ -163,11 +163,6 @@ function update() {
   rect(0, G.HEIGHT/8, G.WIDTH/14, G.HEIGHT);
   rect(G.WIDTH, G.HEIGHT, -G.WIDTH, -G.HEIGHT/20);
   rect(G.WIDTH, G.HEIGHT, -G.WIDTH/14, -7*G.HEIGHT/8);
-  color("purple");
-  rect(G.WIDTH/15, 1.4*G.HEIGHT/8, G.WIDTH/12, G.WIDTH/12);
-  rect(12.8*G.WIDTH/15, 1.4*G.HEIGHT/8, G.WIDTH/12, G.WIDTH/12);
-  rect(G.WIDTH/15, 7.25*G.HEIGHT/8, G.WIDTH/12, G.WIDTH/12);
-  rect(12.8*G.WIDTH/15, 7.25*G.HEIGHT/8, G.WIDTH/12, G.WIDTH/12);
   //Projection Line
   color("light_black");
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
@@ -176,7 +171,7 @@ function update() {
   box(ball, 4);
   //Pins(other balls)
   color("red");
-  pins.forEach((s) => {
+ /* pins.forEach((s) => {
     //collision with the ball
     if (abs(s.pos.y - ball.y) < 4 && abs(s.pos.x - ball.x) < 4 && shot == true) {
       //console.log("collision");
@@ -231,7 +226,7 @@ function update() {
     s.pos.y += s.vy;
 
     box(s.pos, 4);
-  });
+  });*/
 
   color("yellow");
   rect(11.7*G.WIDTH/13, 14.9*G.HEIGHT/16, 1, 1)
