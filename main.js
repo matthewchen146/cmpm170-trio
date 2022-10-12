@@ -67,6 +67,8 @@ function update() {
       widthPos -= G.WIDTH/30;
       heightPos -= G.HEIGHT/50;
     }
+
+    generateLevel();
   }
 
   if ( switching == false){
