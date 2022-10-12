@@ -52,6 +52,11 @@ let hole;
 */
 let pins = [];
 
+
+const engine = Matter.Engine.create();
+engine.gravity.y = 0;
+
+
 let grounds = [];
 let obstacles = [];
 
@@ -85,11 +90,11 @@ function update() {
     // later, a new level will be created after every level completion
     let startPos = generateLevel();
     ball.set(startPos);
+    ball = Matter.Bodies.circle(startPos.x, startPos.y, 4);
+    ball.restitution = 1;
+    Matter.Composite.add(engine.world, [ball]);
   }
-
-  //Board
-//   color("green");
-//   rect(0, 0, G.WIDTH, G.HEIGHT);
+  Matter.Engine.update(engine);
 
 for (let i = 0; i < grounds.length; i++) {
     const ground = grounds[i];
@@ -102,6 +107,33 @@ for (let i = 0; i < grounds.length; i++) {
     const obstacle = obstacles[i];
     obstacle.draw();
   }
+
+  if(input.isPressed && charge< 0.15 && shot === false){
+    charge += .01;
+    
+  }
+
+  if (input.isJustReleased && shot === false) {
+    Matter.Body.applyForce(ball, ball.position, {x: .01 * charge, y: -.01 * charge});
+    shot = true;
+  }
+
+  if (ball.speed < .01) {
+    Matter.Body.setVelocity(ball, {x: 0, y: 0});
+    charge = 0;
+    shot = false;
+  }
+//   console.log(ball.position);
+
+  //Projection Line
+  color("blue");
+  line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
+
+  color('white');
+  box(ball.position.x, ball.position.y, 4, 4);
+  color('black');
+
+  return;
 
   if ( switching == false){
     projection.angle -= 0.05;

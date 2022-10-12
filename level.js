@@ -8,6 +8,15 @@ class Obstacle {
         if (options.addToObstacles === undefined || options.addToObstacles === true) {
             obstacles.push(this);
         }
+
+        if (options.canCollide === undefined || options.canCollide === true) {
+            this.body = Matter.Bodies.rectangle(this.pos.x, this.pos.y, this.size.x, this.size.y, {
+                isStatic: true
+            });
+            this.body.restitution = .8
+            Matter.Composite.add(engine.world, [this.body]);
+        }
+        
     }
 
     draw() {
@@ -21,6 +30,7 @@ class Ground extends Obstacle {
     constructor(options = {}) {
         options.color = 'green';
         options.addToObstacles = false;
+        options.canCollide = false;
         super(options);
         grounds.push(this);
     }
@@ -94,46 +104,28 @@ function generateLevel(seed = 1) {
 
         if (!(direction.x > 0 || lastDirection.x < 0)) {
             new Wall({
-                pos: vec(ground.pos.x + ground.size.x * .5 - 3, ground.pos.y),
-                size: vec(6, ground.size.y - 12)
+                pos: vec(ground.pos.x + ground.size.x * .5, ground.pos.y),
+                size: vec(6, ground.size.y + 6)
             })
         }
         if (!(direction.x < 0 || lastDirection.x > 0)) {
             new Wall({
-                pos: vec(ground.pos.x - ground.size.x * .5 + 3, ground.pos.y),
-                size: vec(6, ground.size.y - 12)
+                pos: vec(ground.pos.x - ground.size.x * .5, ground.pos.y),
+                size: vec(6, ground.size.y + 6)
             })
         }
         if (!(direction.y > 0 || lastDirection.y < 0)) {
             new Wall({
-                pos: vec(ground.pos.x, ground.pos.y + ground.size.y * .5 - 3),
-                size: vec(ground.size.x - 12, 6)
+                pos: vec(ground.pos.x, ground.pos.y + ground.size.y * .5),
+                size: vec(ground.size.x + 6, 6)
             })
         }
         if (!(direction.y < 0 || lastDirection.y > 0)) {
             new Wall({
-                pos: vec(ground.pos.x, ground.pos.y - ground.size.y * .5 + 3),
-                size: vec(ground.size.x - 12, 6)
+                pos: vec(ground.pos.x, ground.pos.y - ground.size.y * .5),
+                size: vec(ground.size.x + 6, 6)
             })
         }
-        // corners
-        new Wall({
-            pos: vec(ground.pos.x + ground.size.x * .5 - 3, ground.pos.y - ground.size.y * .5 + 3),
-            size: vec(6,6)
-        })
-        new Wall({
-            pos: vec(ground.pos.x - ground.size.x * .5 + 3, ground.pos.y - ground.size.y * .5 + 3),
-            size: vec(6,6)
-        })
-        new Wall({
-            pos: vec(ground.pos.x + ground.size.x * .5 - 3, ground.pos.y + ground.size.y * .5 - 3),
-            size: vec(6,6)
-        })
-        new Wall({
-            pos: vec(ground.pos.x - ground.size.x * .5 + 3, ground.pos.y + ground.size.y * .5 - 3),
-            size: vec(6,6)
-        })
-        
 
         sectorCoord.add(direction);
         lastDirection = direction;
