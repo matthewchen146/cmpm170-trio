@@ -163,7 +163,7 @@ function update() {
     shiftspeed *= -1 ; 
     //dropspeed *= -1;
   }
-  if (ball.y < 1.3*G.HEIGHT/8 || ball.y > 7.7*G.HEIGHT/8 ){
+  if (ball.y >= 25 *G.HEIGHT/26   || ball.y <= G.HEIGHT/26  ){
     bonks-= 0.01;
     //ball.x = 10;
     dropspeed *= -1 ;
