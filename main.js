@@ -48,9 +48,25 @@ let shot = false;
 
 let gameReady = false;
 
+//
+// MATTER JS
+//
+
 // matterjs engine. contains engine.world, which contains all bodies such as walls, the ball, etc.
 const engine = Matter.Engine.create();
 engine.gravity.y = 0;
+
+//
+Matter.Events.on(engine, 'collisionActive', (e) => {
+    
+})
+Matter.Events.on(engine, 'collisionStart', (e) => {
+    
+})
+Matter.Events.on(engine, 'collisionEnd', (e) => {
+    
+})
+
 
 // array of ground objects. these are the green things
 let grounds = [];
@@ -118,6 +134,7 @@ function update() {
         charge = Math.min(charge + .01, 1);
     } else {
         if (!shot) {
+            // calculates rotation around a point
             projectionDirection.set(
                 Math.cos(projectionAngle),
                 Math.sin(projectionAngle),
@@ -142,6 +159,7 @@ function update() {
     
                 // reset projection angle
                 projectionAngle = 0;
+                projectionDirection.set(1, 0);
             }
 
         } else {
