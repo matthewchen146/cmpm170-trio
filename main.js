@@ -201,9 +201,14 @@ function update() {
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
   //Ball
   color("white");
-  box(ball, 4);
+  let collision = box(ball, 4);
   //Pins(other balls)
   color("red");
+
+  // Check if ball Collided with the Goal
+  if(collision.isColliding.char.a){
+    text("GOAL!!!",50,50);
+  }
  /* pins.forEach((s) => {
     //collision with the ball
     if (abs(s.pos.y - ball.y) < 4 && abs(s.pos.x - ball.x) < 4 && shot == true) {
