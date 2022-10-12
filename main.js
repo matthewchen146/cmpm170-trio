@@ -51,6 +51,8 @@ let launch = 0;
 */
 let pins = [];
 
+let obstacles = [];
+
 function update() {
   if (!ticks) {
     shiftspeed = 0;
@@ -59,6 +61,7 @@ function update() {
     projection = { angle: 0, length: projlen, pin: ball };
 
     pins = [];
+    obstacles = [];
     let heightPos = G.HEIGHT/2;
     let widthPos = G.WIDTH/2;
     for (let y = 1; y < 5; y++) {
@@ -76,7 +79,21 @@ function update() {
       heightPos -= G.HEIGHT/50;
     }
 
+
+    // generates level. this is here for testing at the moment
+    // later, a new level will be created after every level completion
     generateLevel();
+  }
+
+  //Board
+  color("green");
+  rect(0, 0, G.WIDTH, G.HEIGHT);
+
+  // draws all the obstacles into the world
+  // anything below this can collide with obstacles
+  for (let i = 0; i < obstacles.length; i++) {
+    const obstacle = obstacles[i];
+    obstacle.draw();
   }
 
   if ( switching == false){
@@ -87,15 +104,16 @@ function update() {
     projection.angle += 0.05;
     //console.log(Math.round(projection.angle))
   }
-  if (Math.round(projection.angle) < -3){
+  if (Math.round(projection.angle) == -4){
     //console.log(Math.round(projection.angle))
     switching = true;
   }
-  if(Math.round(projection.angle) > 0){
+  if(Math.round(projection.angle) == 4 ){
     //console.log(Math.round(projection.angle))
     //console.log("yo")
     switching = false;
   }
+  console.log(projection.angle)
 
   if(input.isPressed && charge<0.15 && shot == false){
     charge+=.003;
@@ -165,14 +183,12 @@ function update() {
     //box(ball, 3);
   }
 
-  //Board
-  color("green");
-  rect(0, G.HEIGHT/8, G.WIDTH, 8*G.HEIGHT/8);
-  color("black");
-  rect(0, G.HEIGHT/8, G.WIDTH, G.HEIGHT/20);
-  rect(0, G.HEIGHT/8, G.WIDTH/14, G.HEIGHT);
-  rect(G.WIDTH, G.HEIGHT, -G.WIDTH, -G.HEIGHT/20);
-  rect(G.WIDTH, G.HEIGHT, -G.WIDTH/14, -7*G.HEIGHT/8);
+  
+//   color("black");
+//   rect(0, G.HEIGHT/8, G.WIDTH, G.HEIGHT/20);
+//   rect(0, G.HEIGHT/8, G.WIDTH/14, G.HEIGHT);
+//   rect(G.WIDTH, G.HEIGHT, -G.WIDTH, -G.HEIGHT/20);
+//   rect(G.WIDTH, G.HEIGHT, -G.WIDTH/14, -7*G.HEIGHT/8);
   //Projection Line
   color("light_black");
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
@@ -254,4 +270,3 @@ function update() {
   }*/
   
 }
-addEventListener("load", onLoad);
