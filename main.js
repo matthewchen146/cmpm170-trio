@@ -4,7 +4,15 @@ description = `
 [Hold] Charge Ball
 [Release] Shoot Ball`;
 
-characters = [];
+characters = [
+  `
+pppppp
+p    p
+p    p
+p    p
+pppppp
+`
+];
 
 const G = {
   WIDTH: 150,
