@@ -44,66 +44,53 @@ class Hole extends Obstacle{
 }
 
 
-function generateLevel(seed = 0) {
+function generateLevel(seed = 1) {
     randomSeed(seed);
     const sectorCoord = vec(Math.floor(random() * 3), 4);
+    let firstGround;
+    let lastGround;
 
     clearLevel();
-    // border walls
-    // new Wall({
-    //     pos: vec(3, G.HEIGHT * .5),
-    //     size: vec(6, G.HEIGHT)
-    // })
-    // new Wall({
-    //     pos: vec(G.WIDTH - 3, G.HEIGHT * .5),
-    //     size: vec(6, G.HEIGHT)
-    // })
-    // new Wall({
-    //     pos: vec(G.WIDTH * .5, 3),
-    //     size: vec(G.WIDTH, 6)
-    // })
-    // new Wall({
-    //     pos: vec(G.WIDTH * .5, G.HEIGHT - 3),
-    //     size: vec(G.WIDTH, 6)
-    // })
-
-    // test middle wall
-    // new Wall({
-    //     pos: vec(G.WIDTH * .5, G.HEIGHT * .5),
-    //     size: vec(50,10)
-    // })
-
-    // obstacle walls
-    // for (let i = 0; i < 5; i++) {
-    //     new Wall({
-    //         pos: vec(random() * G.WIDTH, random() * G.HEIGHT),
-    //         size: vec(50 * random() + 12,12)
-    //     })
-    // }
 
     // sector based
     let lastDirection = vec(0,0);
-    for (let i = 0; i < 7; i++) {
+    let visitedSectors = {}
+    let maxSectorCount = 10;
+    for (let i = 0; i < maxSectorCount; i++) {
         const ground = new Ground({
             pos: vec(sectorCoord).mul(48).add(27, 0),
             size: vec(48, 48)
         })
-
-        let direction;
-        if (random() < .8) {
-            if (sectorCoord.x > 0) {
-                if (sectorCoord.x === 2) {
-                    direction = vec(-1, 0);
-                } else {
-                    direction = vec(random() > .5 ? 1 : -1, 0);
-                }
-            } else {
-                direction = vec(1, 0);
-            }
-            
-        } else {
-            direction = vec(0, -1);
+        if (!firstGround) {
+            firstGround = ground;
         }
+        if (visitedSectors[sectorCoord.x] === undefined) {
+            visitedSectors[sectorCoord.x] = {};
+        }
+        visitedSectors[sectorCoord.x][sectorCoord.y] = ground;
+        lastGround = ground;
+
+        const possibleDirections = [];
+        for (let x = -1; x <= 1; x++) {
+            for (let y = -1; y <= 1; y++) {
+                let newCoord = vec(sectorCoord).add(x, y);
+                if (visitedSectors[newCoord.x] === undefined) {
+                    visitedSectors[newCoord.x] = {};
+                }
+                if (Math.abs(x) + Math.abs(y) !== 2 && !(x === 0 && x === y) && !visitedSectors[newCoord.x][newCoord.y] && newCoord.x <= 2 && newCoord.x >= 0 && newCoord.y <= 4 && newCoord.y >= 1) {
+                    possibleDirections.push(vec(x, y));
+                }
+            }
+        }
+
+        let direction = vec(0,0);
+        if (possibleDirections.length === 0 || i === maxSectorCount - 1) {
+            lastGround = ground;
+        } else {
+            direction = possibleDirections[Math.floor(random() * possibleDirections.length)];
+        }
+
+        
 
         if (!(direction.x > 0 || lastDirection.x < 0)) {
             new Wall({
@@ -152,10 +139,12 @@ function generateLevel(seed = 0) {
         lastDirection = direction;
     }
     
-
+    
     new Hole({
-        pos: vec(random()*G.WIDTH,random()*50)
+        pos: vec(lastGround.pos)
     })
+
+    return firstGround.pos;
 }
 
 function clearLevel() {

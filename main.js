@@ -83,7 +83,8 @@ function update() {
 
     // generates level. this is here for testing at the moment
     // later, a new level will be created after every level completion
-    generateLevel();
+    let startPos = generateLevel();
+    ball.set(startPos);
   }
 
   //Board
