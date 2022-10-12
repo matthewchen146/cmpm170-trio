@@ -113,7 +113,7 @@ function update() {
     //console.log("yo")
     switching = false;
   }
-  console.log(projection.angle)
+  //console.log(projection.angle)
 
   if(input.isPressed && charge<0.15 && shot == false){
     charge+=.003;
@@ -128,6 +128,7 @@ function update() {
     //console.log("PROJECTION CHECK")
     //console.log(projection.angle);
     manipshift = 1.5 - Math.abs(projection.angle)  
+    manipshift2 = 4 -  Math.abs(projection.angle)  
     if(projection.angle < -1.5){
      //shiftspeed *= (projection.angle);
      shiftspeed *=  manipshift;
@@ -135,14 +136,20 @@ function update() {
      dropspeed *=  manipdrop;
      //console.log("PROJECTION CHECK")
     }
-    else if(Math.round(projection.angle == -1.5)){
+    else if(Math.round(projection.angle == -1.5) || Math.round(projection.angle == 1.5)){
       shiftspeed =0; 
     }
-    else{
+    else if(projection.angle > 0 && projection.angle< 1.5){
       shiftspeed *= 1 * manipshift;
       manipdrop = 0 + projection.angle;
       dropspeed *=  manipdrop;
     }
+    else{
+      shiftspeed *= 1 * manipshift;
+      manipdrop = 3.5 - projection.angle;
+      dropspeed *=  manipdrop;
+    }
+
   }
   if (ball.x < G.WIDTH/16 || ball.x > 15*G.WIDTH/16){
     bonks -= 0.01;
