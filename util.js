@@ -8,8 +8,15 @@ console.log('game seed:', hashKey);
 // pseudo random numbers using murmurhash3 function
 // murmurhash3 for javascript written by mikolalysenko at https://github.com/mikolalysenko/murmurhash-js
 
+let currentSeed = 0;
+
 // divides 32 bit hash by 32 bit highest unsigned integer
 // returns float between 0 and 1
-function random(seed) {
+function random(seed = currentSeed, increment = true) {
+    if (increment) currentSeed += 1;
     return murmurhash3_32_gc(hashKey, seed) / 4294967295;
+}
+
+function randomSeed(seed) {
+    currentSeed = seed;
 }

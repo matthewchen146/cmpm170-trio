@@ -37,7 +37,7 @@ class Hole extends Obstacle{
 
 
 function generateLevel(seed = 0) {
-    
+    randomSeed(seed);
 
     clearLevel();
     // border walls
@@ -59,12 +59,23 @@ function generateLevel(seed = 0) {
     })
 
     // test middle wall
-    new Wall({
-        pos: vec(G.WIDTH * .5, G.HEIGHT * .5),
-        size: vec(50,10)
-    })
+    // new Wall({
+    //     pos: vec(G.WIDTH * .5, G.HEIGHT * .5),
+    //     size: vec(50,10)
+    // })
+
+    // obstacle walls
+    for (let i = 0; i < 5; i++) {
+        new Wall({
+            pos: vec(random() * G.WIDTH, random() * G.HEIGHT),
+            size: vec(12,12)
+        })
+    }
+    
+
+
     new Hole({
-        pos: vec(random(seed)*G.WIDTH,random(seed)*50)
+        pos: vec(random()*G.WIDTH,random()*50)
     })
 }
 
