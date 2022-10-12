@@ -52,6 +52,7 @@ let hole;
 */
 let pins = [];
 
+let grounds = [];
 let obstacles = [];
 
 function update() {
@@ -62,7 +63,6 @@ function update() {
     projection = { angle: 0, length: projlen, pin: ball };
 
     pins = [];
-    obstacles = [];
     let heightPos = G.HEIGHT/2;
     let widthPos = G.WIDTH/2;
     for (let y = 1; y < 5; y++) {
@@ -87,8 +87,13 @@ function update() {
   }
 
   //Board
-  color("green");
-  rect(0, 0, G.WIDTH, G.HEIGHT);
+//   color("green");
+//   rect(0, 0, G.WIDTH, G.HEIGHT);
+
+for (let i = 0; i < grounds.length; i++) {
+    const ground = grounds[i];
+    ground.draw();
+  }
 
   // draws all the obstacles into the world
   // anything below this can collide with obstacles
