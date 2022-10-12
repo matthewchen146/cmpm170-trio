@@ -145,9 +145,14 @@ function update() {
       manipdrop = 0 + projection.angle;
       dropspeed *=  manipdrop;
     }
-    else{
+    else if(projection.angle > 1.5 && projection.angle< 4){
       shiftspeed *= 1 * manipshift;
       manipdrop = 3.5 - projection.angle;
+      dropspeed *=  manipdrop;
+    }
+    else{
+      shiftspeed *= 1 * manipshift;
+      manipdrop = 0 + projection.angle;
       dropspeed *=  manipdrop;
     }
 
@@ -192,10 +197,10 @@ function update() {
   }
 
   //Projection Line
-  color("light_black");
+  color("blue");
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
   //Ball
-  color("blue");
+  color("white");
   box(ball, 4);
   //Pins(other balls)
   color("red");
