@@ -168,7 +168,7 @@ for (let i = 0; i < grounds.length; i++) {
     shiftspeed *= -1 ; 
     //dropspeed *= -1;
   }
-  if (ball.y < 1.3*G.HEIGHT/8 || ball.y > 7.7*G.HEIGHT/8 ){
+  if (ball.y >= 25 *G.HEIGHT/26   || ball.y <= G.HEIGHT/26  ){
     bonks-= 0.01;
     //ball.x = 10;
     dropspeed *= -1 ;
@@ -206,9 +206,14 @@ for (let i = 0; i < grounds.length; i++) {
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
   //Ball
   color("white");
-  box(ball, 4);
+  let collision = box(ball, 4);
   //Pins(other balls)
   color("red");
+
+  // Check if ball Collided with the Goal
+  if(collision.isColliding.char.a){
+    text("GOAL!!!",50,50);
+  }
  /* pins.forEach((s) => {
     //collision with the ball
     if (abs(s.pos.y - ball.y) < 4 && abs(s.pos.x - ball.x) < 4 && shot == true) {
