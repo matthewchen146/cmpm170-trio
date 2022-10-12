@@ -96,15 +96,16 @@ function update() {
     projection.angle += 0.05;
     //console.log(Math.round(projection.angle))
   }
-  if (Math.round(projection.angle) < -3){
+  if (Math.round(projection.angle) == -4){
     //console.log(Math.round(projection.angle))
     switching = true;
   }
-  if(Math.round(projection.angle) > 0){
+  if(Math.round(projection.angle) == 4 ){
     //console.log(Math.round(projection.angle))
     //console.log("yo")
     switching = false;
   }
+  console.log(projection.angle)
 
   if(input.isPressed && charge<0.15 && shot == false){
     charge+=.003;
