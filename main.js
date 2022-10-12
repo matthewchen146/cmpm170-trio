@@ -192,10 +192,10 @@ function update() {
   }
 
   //Projection Line
-  color("light_black");
+  color("blue");
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
   //Ball
-  color("blue");
+  color("white");
   box(ball, 4);
   //Pins(other balls)
   color("red");
