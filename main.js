@@ -84,6 +84,7 @@ function update() {
       widthPos -= G.WIDTH/30;
       heightPos -= G.HEIGHT/50;
     }
+    shot = false;
 
 
     // generates level. this is here for testing at the moment
@@ -108,17 +109,16 @@ for (let i = 0; i < grounds.length; i++) {
     obstacle.draw();
   }
 
-  if(input.isPressed && charge< 0.15 && shot === false){
+  if(input.isPressed && charge< 1 && shot === false){
     charge += .01;
-    
   }
 
   if (input.isJustReleased && shot === false) {
-    Matter.Body.applyForce(ball, ball.position, {x: .01 * charge, y: -.01 * charge});
+    Matter.Body.applyForce(ball, ball.position, {x: .001 * charge, y: -.001 * charge});
     shot = true;
   }
-
-  if (ball.speed < .01) {
+  
+  if (ball.speed < .01 && shot === true) {
     Matter.Body.setVelocity(ball, {x: 0, y: 0});
     charge = 0;
     shot = false;
