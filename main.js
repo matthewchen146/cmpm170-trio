@@ -39,6 +39,7 @@ let charge = 0;
 let shot = false;
 let switching = false;
 let launch = 0;
+let hole;
 
 /**
 * @typedef {{
@@ -183,12 +184,23 @@ function update() {
     //box(ball, 3);
   }
 
+<<<<<<< Updated upstream
   
 //   color("black");
 //   rect(0, G.HEIGHT/8, G.WIDTH, G.HEIGHT/20);
 //   rect(0, G.HEIGHT/8, G.WIDTH/14, G.HEIGHT);
 //   rect(G.WIDTH, G.HEIGHT, -G.WIDTH, -G.HEIGHT/20);
 //   rect(G.WIDTH, G.HEIGHT, -G.WIDTH/14, -7*G.HEIGHT/8);
+=======
+  //Board
+  color("green");
+  rect(0, G.HEIGHT/8, G.WIDTH, G.HEIGHT);
+  color("black");
+  rect(0, G.HEIGHT/8, G.WIDTH, G.HEIGHT/20);
+  rect(0, G.HEIGHT/8, G.WIDTH/14, G.HEIGHT);
+  rect(G.WIDTH, G.HEIGHT, -G.WIDTH, -G.HEIGHT/20);
+  rect(G.WIDTH, G.HEIGHT, -G.WIDTH/14, -7*G.HEIGHT/8);
+>>>>>>> Stashed changes
   //Projection Line
   color("light_black");
   line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
