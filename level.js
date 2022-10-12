@@ -26,10 +26,19 @@ class Wall extends Obstacle {
     }
 }
 
+class Hole extends Obstacle{
+    constructor(options = {}){
+        super(options);
+    }
+    draw(){
+        char('a',this.pos);
+    }
+}
+
 
 function generateLevel(seed = 0) {
     
-    char('a',rnd(0,G.WIDTH),rnd(30,G.HEIGHT));
+
     clearLevel();
     // border walls
     new Wall({
@@ -53,6 +62,9 @@ function generateLevel(seed = 0) {
     new Wall({
         pos: vec(G.WIDTH * .5, G.HEIGHT * .5),
         size: vec(50,10)
+    })
+    new Hole({
+        pos: vec(random(seed)*G.WIDTH,random(seed)*50)
     })
 }
 
