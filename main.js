@@ -5,8 +5,9 @@ description = `
 [Release] Shoot Ball`;
 
 characters = [
-  `
+`
 pppppp
+p    p
 p    p
 p    p
 p    p
@@ -15,308 +16,113 @@ pppppp
 ];
 
 const G = {
-  WIDTH: 150,
-  HEIGHT: 250,
+    WIDTH: 150,
+    HEIGHT: 250,
 };
 
 options = {
-  viewSize: {x: G.WIDTH, y: G.HEIGHT},
-  isReplayEnabled: true,
-  isDrawingScoreFront: true,
-
+    viewSize: {x: G.WIDTH, y: G.HEIGHT},
+    isReplayEnabled: true,
+    isDrawingScoreFront: true,
 };
 
-/** @type {{angle: number, length: number, pin: Vector}} */
 let projection;
 let projlen = 7;
 
-///** @type {Vector[]} */
 let ball;
-let shiftspeed = 0;
-let dropspeed = 0;
-let bonks = 0;
 let charge = 0;
 let shot = false;
-let switching = false;
-let launch = 0;
-let hole;
 
-/**
-* @typedef {{
-* pos: Vector, vx: number, vy: number, start: Vector
-* }} Pin
-*/
-
-/**
-* @type  { Pin [] }
-*/
-let pins = [];
-
-
+// matterjs engine. contains engine.world, which contains all bodies such as walls, the ball, etc.
 const engine = Matter.Engine.create();
 engine.gravity.y = 0;
 
-
+// array of ground objects. these are the green things
 let grounds = [];
+
+// array of obstacles. this includes walls, hazards, the such
 let obstacles = [];
 
 function update() {
-  if (!ticks) {
-    shiftspeed = 0;
-    dropspeed = 0;
-    ball = vec(G.WIDTH/2, 4 * G.HEIGHT/5);
-    projection = { angle: 0, length: projlen, pin: ball };
+    if (!ticks) {
 
-    pins = [];
-    let heightPos = G.HEIGHT/2;
-    let widthPos = G.WIDTH/2;
-    for (let y = 1; y < 5; y++) {
-      let widthDis = widthPos;
-      for (let x = 0; x < y; x++) {
-        pins.push({
-          pos: vec(widthDis, heightPos),
-          vx: 0,
-          vy: 0,
-          start: vec(widthDis, heightPos)
-        });
-        widthDis += G.WIDTH/15
-      } 
-      widthPos -= G.WIDTH/30;
-      heightPos -= G.HEIGHT/50;
-    }
-    shot = false;
+        projection = { angle: 0, length: projlen, pin: ball };
 
+        // shot represents whether the ball is currently traveling or not
+        shot = false;
 
-    // generates level. this is here for testing at the moment
-    // later, a new level will be created after every level completion
-    let startPos = generateLevel();
-    ball.set(startPos);
-    ball = Matter.Bodies.circle(startPos.x, startPos.y, 4);
-    ball.restitution = 1;
-    Matter.Composite.add(engine.world, [ball]);
-  }
-  Matter.Engine.update(engine);
+        // generates level. this is here for testing at the moment
+        // later, a new level will be created after every level completion
+        // generate level returns level data, that contains start position, end position, etc.
+        let startPos = generateLevel();
 
-for (let i = 0; i < grounds.length; i++) {
-    const ground = grounds[i];
-    ground.draw();
-  }
+        // creates matterjs body that represents the ball
+        ball = Matter.Bodies.circle(startPos.x, startPos.y, 4);
 
-  // draws all the obstacles into the world
-  // anything below this can collide with obstacles
-  for (let i = 0; i < obstacles.length; i++) {
-    const obstacle = obstacles[i];
-    obstacle.draw();
-  }
+        // sets the ball's bounciness. between 0 and 1
+        ball.restitution = 1;
 
-  if(input.isPressed && charge< 1 && shot === false){
-    charge += .01;
-  }
-
-  if (input.isJustReleased && shot === false) {
-    Matter.Body.applyForce(ball, ball.position, {x: .001 * charge, y: -.001 * charge});
-    shot = true;
-  }
-  
-  if (ball.speed < .01 && shot === true) {
-    Matter.Body.setVelocity(ball, {x: 0, y: 0});
-    charge = 0;
-    shot = false;
-  }
-//   console.log(ball.position);
-
-  //Projection Line
-  color("blue");
-  line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
-
-  color('white');
-  box(ball.position.x, ball.position.y, 4, 4);
-  color('black');
-
-  return;
-
-  if ( switching == false){
-    projection.angle -= 0.05;
-  }
-  else if( switching == true){
-    //console.log("helo")
-    projection.angle += 0.05;
-    //console.log(Math.round(projection.angle))
-  }
-  if (Math.round(projection.angle) == -4){
-    //console.log(Math.round(projection.angle))
-    switching = true;
-  }
-  if(Math.round(projection.angle) == 4 ){
-    //console.log(Math.round(projection.angle))
-    //console.log("yo")
-    switching = false;
-  }
-  //console.log(projection.angle)
-
-  if(input.isPressed && charge<0.15 && shot == false){
-    charge+=.003;
-    shiftspeed += charge;
-    dropspeed += charge;
-    //shot = true;
-
-  }
-  if(input.isJustReleased && shot ==false){
-    shot = true;
-    projection.length = 0;
-    //console.log("PROJECTION CHECK")
-    //console.log(projection.angle);
-    manipshift = 1.5 - Math.abs(projection.angle)  
-    manipshift2 = 4 -  Math.abs(projection.angle)  
-    if(projection.angle < -1.5){
-     //shiftspeed *= (projection.angle);
-     shiftspeed *=  manipshift;
-     manipdrop = -3 - projection.angle;
-     dropspeed *=  manipdrop;
-     //console.log("PROJECTION CHECK")
-    }
-    else if(Math.round(projection.angle == -1.5) || Math.round(projection.angle == 1.5)){
-      shiftspeed =0; 
-    }
-    else if(projection.angle > 0 && projection.angle< 1.5){
-      shiftspeed *= 1 * manipshift;
-      manipdrop = 0 + projection.angle;
-      dropspeed *=  manipdrop;
-    }
-    else if(projection.angle > 1.5 && projection.angle< 4){
-      shiftspeed *= 1 * manipshift;
-      manipdrop = 3.5 - projection.angle;
-      dropspeed *=  manipdrop;
-    }
-    else{
-      shiftspeed *= 1 * manipshift;
-      manipdrop = 0 + projection.angle;
-      dropspeed *=  manipdrop;
+        // adds ball to the engine.world
+        Matter.Composite.add(engine.world, [ball]);
     }
 
-  }
-  if (ball.x < G.WIDTH/16 || ball.x > 15*G.WIDTH/16){
-    bonks -= 0.01;
-    //ball.x = 10;
-    shiftspeed *= -1 ; 
-    //dropspeed *= -1;
-  }
-  if (ball.y >= 25 *G.HEIGHT/26   || ball.y <= G.HEIGHT/26  ){
-    bonks-= 0.01;
-    //ball.x = 10;
-    dropspeed *= -1 ;
-    //dropspeed *= -1;
-  }
-  if (shot == true) {
-    if (shiftspeed != 0){
-      shiftspeed = shiftspeed /1.005;
-    }
-    if (dropspeed != 0){
-      dropspeed = dropspeed/1.005;
+    // updates the matterjs engine every frame
+    Matter.Engine.update(engine);
+
+
+    //
+    // DRAWING THE LEVEL
+    //
+
+    // draws green grounds
+    for (let i = 0; i < grounds.length; i++) {
+        const ground = grounds[i];
+        ground.draw();
     }
 
-    if((Math.abs(shiftspeed)<.01) && (Math.abs(dropspeed)<.01)){
-      //console.log("zero");
-      shiftspeed = 0;
-      dropspeed = 0;
-      charge = 0;
-      shot = false;
-    }
-    ball.y += dropspeed;
-    ball.x += shiftspeed;
-    //console.log(charge);
-  }
-
-  if (shot == false){
-    //ball.x = ball.x; //G.WIDTH/2 
-    //ball.y = ball.y; //4 * G.HEIGHT/5
-    projection.length = 7;
-    //box(ball, 3);
-  }
-
-  //Projection Line
-  color("blue");
-  line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
-  //Ball
-  color("white");
-  let collision = box(ball, 4);
-  //Pins(other balls)
-  color("red");
-
-  // Check if ball Collided with the Goal
-  if(collision.isColliding.char.a){
-    text("GOAL!!!",50,50);
-  }
- /* pins.forEach((s) => {
-    //collision with the ball
-    if (abs(s.pos.y - ball.y) < 4 && abs(s.pos.x - ball.x) < 4 && shot == true) {
-      //console.log("collision");
-      s.vx = shiftspeed;
-      s.vy = dropspeed;
-      shiftspeed *= -1;
-      dropspeed *=-1;
+    // draws all the obstacles into the world
+    for (let i = 0; i < obstacles.length; i++) {
+        const obstacle = obstacles[i];
+        obstacle.draw();
     }
 
-    //collision with other pins
-    pins.forEach((p) => {
-      if (abs(s.pos.y - p.pos.y) < 4 && abs(s.pos.x - p.pos.x) < 4 && s != p) {
-        //console.log("collision");
-        s.vx = p.vx;
-        s.vy = p.vy;
-        p.vx *= -1;
-        p.vy *= -1;
-      }
-    });
-    //slows down pins over time
-    pins.forEach((p) => {
-      if (p.vy!= 0){
-        p.vy = p.vy /1.001;
-      }
-      if (p.vx != 0){
-        p.vx = p.vx/1.001;
-      }
-    });
+    
+    //
+    // PLAYER INPUT
+    //
 
 
-    //collision with walls
-    if (s.pos.x < G.WIDTH/16 || s.pos.x > 15*G.WIDTH/16) {
-      if (s.pos.x < G.WIDTH/16){
-        s.pos.x += 1
-      }
-      else{
-        s.pos.x -=1
-      }
-      s.vx *= -1;
-    }
-    if (s.pos.y < 1.3*G.HEIGHT/8 || s.pos.y > 7.7*G.HEIGHT/8 ) {
-      if (s.pos.y < 1.3*G.HEIGHT/8) {
-        s.pos.y += 1
-      }
-      else{
-        s.pos.y -=1
-      }
-      s.vy *= -1;
+    // increases charge as input is pressed. charge affects how hard the ball is launched
+    if(input.isPressed && charge < 1 && shot === false){
+        charge += .01;
     }
 
-    s.pos.x += s.vx;
-    s.pos.y += s.vy;
+    // on input release, the ball is launched
+    if (input.isJustReleased && shot === false) {
+        // this applies a force to the ball based on the charge
+        // the value .001 is ideal as the max after testing
+        Matter.Body.applyForce(ball, ball.position, {x: .001 * charge, y: -.001 * charge});
+        shot = true;
+    }
+    
+    // stops the ball when the ball speed is slow enough, and enables the ball to be launched again
+    if (ball.speed < .01 && shot === true) {
+        Matter.Body.setVelocity(ball, {x: 0, y: 0});
+        charge = 0;
+        shot = false;
+    }
+    
 
-    box(s.pos, 4);
-  });*/
+    //Projection Line
+    color("blue");
+    line(projection.pin, vec(projection.pin).addWithAngle(projection.angle, projection.length));
 
-  /*color("yellow");
-  rect(11.7*G.WIDTH/13, 14.9*G.HEIGHT/16, 1, 1)
-  if (abs(1.4*G.WIDTH/13 - ball.x) < 4.9 && abs(3.1*G.HEIGHT/16 - ball.y) < 4.9) { //top-left
-    end();
-  }
-  else if (abs(11.7*G.WIDTH/13 - ball.x) < 4.9 && abs(3.1*G.HEIGHT/16 - ball.y) < 4.9) { //top-right
-    end();
-  }
-  else if (abs(1.4*G.WIDTH/13 - ball.x) < 4.9 && abs(14.9*G.HEIGHT/16 - ball.y) < 4.9) { //bottom-left
-    end();
-  }
-  else if (abs(11.7*G.WIDTH/13 - ball.x) < 4.9 && abs(14.9*G.HEIGHT/16 - ball.y) < 4.9) { //bottom-right
-    end();
-  }*/
-  
+    color('white');
+    let collision = box(ball.position.x, ball.position.y, 4, 4);
+    color('black');
+
+    // Check if ball Collided with the Goal
+    if(collision.isColliding.char.a){
+        text("GOAL!!!",50,50);
+    }
 }
