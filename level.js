@@ -132,11 +132,14 @@ function generateLevel(seed = 1) {
     }
     
     
-    new Hole({
+    const hole = new Hole({
         pos: vec(lastGround.pos)
     })
 
-    return firstGround.pos;
+    return {
+        startPos: vec(firstGround.pos),
+        endPos: vec(hole.pos)
+    }
 }
 
 function clearLevel() {
