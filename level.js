@@ -68,7 +68,7 @@ class Hole extends Obstacle{
 }
 
 
-function generateLevel(seed = 1) {
+async function generateLevel(seed = 0) {
     randomSeed(seed);
     const sectorCoord = vec(Math.floor(random() * 3), 4);
     let firstGround;
@@ -81,6 +81,12 @@ function generateLevel(seed = 1) {
     let visitedSectors = {}
     let maxSectorCount = 10;
     for (let i = 0; i < maxSectorCount; i++) {
+        // await new Promise((resolve) => {
+        //     setTimeout(resolve, 100)
+        // })
+
+        let noWhereToGo = false;
+
         const ground = new Ground({
             pos: vec(sectorCoord).mul(48).add(27, 0),
             size: vec(48, 48)
@@ -110,12 +116,14 @@ function generateLevel(seed = 1) {
         let direction = vec(0,0);
         if (possibleDirections.length === 0 || i === maxSectorCount - 1) {
             lastGround = ground;
+            noWhereToGo = true;
+            console.log('no where to go')
         } else {
             direction = possibleDirections[Math.floor(random() * possibleDirections.length)];
         }
 
         
-
+        
         if (!(direction.x > 0 || lastDirection.x < 0)) {
             new Wall({
                 pos: vec(ground.pos.x + ground.size.x * .5, ground.pos.y),
@@ -143,6 +151,10 @@ function generateLevel(seed = 1) {
 
         sectorCoord.add(direction);
         lastDirection = direction;
+
+        if (noWhereToGo) {
+            break;
+        }
     }
     
     

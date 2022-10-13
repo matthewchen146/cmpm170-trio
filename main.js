@@ -85,7 +85,9 @@ let obstacles = [];
 
 let currentLevelSeed = 0;
 
-function setupLevel(seed = 0) {
+async function setupLevel(seed = 0) {
+
+    gameReady = false;
 
     // shot represents whether the ball is currently traveling or not
     shot = false;
@@ -93,7 +95,7 @@ function setupLevel(seed = 0) {
     // generates level. this is here for testing at the moment
     // later, a new level will be created after every level completion
     // generate level returns level data, that contains start position, end position, etc.
-    const { startPos, endPos } = generateLevel(seed);
+    const { startPos, endPos } = await generateLevel(seed);
     holePos.set(endPos);
 
     
@@ -114,6 +116,8 @@ function setupLevel(seed = 0) {
         Matter.Body.setPosition(ball, {x: startPos.x, y: startPos.y});
         Matter.Body.setVelocity(ball, {x: 0, y: 0});
     }
+
+    gameReady = true;
 }
 
 
@@ -122,6 +126,8 @@ function update() {
 
         projection = { angle: 0, length: projlen, pin: ball };
         
+        currentLevelSeed = 0;
+
         setupLevel(currentLevelSeed);        
 
         // this variable is to prevent you from holding input after pressing start
@@ -150,6 +156,10 @@ function update() {
     }
 
     
+    if (!gameReady) {
+        return;
+    }
+
 
     //
     // PLAYER INPUT
