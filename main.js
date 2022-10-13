@@ -46,6 +46,8 @@ let ballStopTimer = 0;
 let charge = 0;
 let shot = false;
 
+let holePos = vec(0,0);
+
 let gameReady = false;
 
 //
@@ -58,10 +60,17 @@ engine.gravity.y = 0;
 
 //
 Matter.Events.on(engine, 'collisionActive', (e) => {
-    
+    // console.log('collision active',e)
 })
 Matter.Events.on(engine, 'collisionStart', (e) => {
-    
+    // e contains all pairs of collisions
+    // a pair is 2 bodies that collided
+    for (const pair of e.pairs) {
+        // to access the bodies, use pair.bodyA and pair.bodyB
+        if (pair.bodyA.obstacle || pair.bodyB.obstacle) {
+            play('click');
+        }
+    }
 })
 Matter.Events.on(engine, 'collisionEnd', (e) => {
     
@@ -74,27 +83,46 @@ let grounds = [];
 // array of obstacles. this includes walls, hazards, the such
 let obstacles = [];
 
-function update() {
-    if (!ticks) {
+let currentLevelSeed = 0;
 
-        projection = { angle: 0, length: projlen, pin: ball };
+function setupLevel(seed = 0) {
 
-        // shot represents whether the ball is currently traveling or not
-        shot = false;
+    // shot represents whether the ball is currently traveling or not
+    shot = false;
 
-        // generates level. this is here for testing at the moment
-        // later, a new level will be created after every level completion
-        // generate level returns level data, that contains start position, end position, etc.
-        const { startPos } = generateLevel();
+    // generates level. this is here for testing at the moment
+    // later, a new level will be created after every level completion
+    // generate level returns level data, that contains start position, end position, etc.
+    const { startPos, endPos } = generateLevel(seed);
+    holePos.set(endPos);
 
-        // creates matterjs body that represents the ball
+    
+    if (!ball) {
+        // creates matterjs body that represents the ball if ball doesnt exist yet
         ball = Matter.Bodies.circle(startPos.x, startPos.y, 4);
+        ball.collisionFilter.category = 1;
+        ball.collisionFilter.mask = 1;
 
         // sets the ball's bounciness. between 0 and 1
         ball.restitution = 1;
 
         // adds ball to the engine.world
         Matter.Composite.add(engine.world, [ball]);
+    } else {
+
+        // reset ball if ball already exists
+        Matter.Body.setPosition(ball, {x: startPos.x, y: startPos.y});
+        Matter.Body.setVelocity(ball, {x: 0, y: 0});
+    }
+}
+
+
+function update() {
+    if (!ticks) {
+
+        projection = { angle: 0, length: projlen, pin: ball };
+        
+        setupLevel(currentLevelSeed);        
 
         // this variable is to prevent you from holding input after pressing start
         // it is set to true after the first input release
@@ -200,11 +228,20 @@ function update() {
     }
 
     color('white');
-    let collision = char('a', ballPos);
+    char('a', ballPos);
     color('black');
 
-    // Check if ball Collided with the Goal
-    if(collision.isColliding.char.a){
-        text("GOAL!!!",50,50);
+    const diff = vec(holePos).sub(ball.position.x, ball.position.y);
+    if (diff.length < 2) {
+        currentLevelSeed += 1;
+        setupLevel(currentLevelSeed);
+    } else if (diff.length < 6) {
+        const dir = vec(diff).normalize().mul(.00001 * (1 - diff.length / 6));
+        Matter.Body.applyForce(ball, ball.position, {x: dir.x, y: dir.y})
     }
+
+    // Check if ball Collided with the Goal
+    // if(collision.isColliding.char.a){
+    //     text("GOAL!!!",50,50);
+    // }
 }

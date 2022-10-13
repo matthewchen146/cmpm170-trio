@@ -13,16 +13,28 @@ class Obstacle {
             this.body = Matter.Bodies.rectangle(this.pos.x, this.pos.y, this.size.x, this.size.y, {
                 isStatic: true
             });
-            this.body.restitution = .8
+            this.body.restitution = 1;
+            this.body.collisionFilter.category = 1;
+            this.body.collisionFilter.mask = 1;
             Matter.Composite.add(engine.world, [this.body]);
+
+            this.body.obstacle = this;
         }
         
+        this.isDestroyed = false;
     }
 
     draw() {
         color(this.color);
         box(this.pos, this.size);
         color('black');
+    }
+
+    destroy() {
+        if (this.body) {
+            Matter.World.remove(engine.world, this.body);
+        }
+        this.isDestroyed = true;
     }
 }
 
@@ -45,11 +57,13 @@ class Wall extends Obstacle {
 }
 
 class Hole extends Obstacle{
-    constructor(options = {}){
+    constructor(options = {}) {
+        options.canCollide = false;
         super(options);
     }
-    draw(){
-        char('a',this.pos);
+
+    draw() {
+        char('b', this.pos);
     }
 }
 
@@ -143,6 +157,12 @@ function generateLevel(seed = 1) {
 }
 
 function clearLevel() {
+    for (const ground of grounds) {
+        ground.destroy();
+    }
+    for (const obstacle of obstacles) {
+        obstacle.destroy();
+    }
     grounds = [];
     obstacles = [];
 }
