@@ -73,6 +73,7 @@ Matter.Events.on(engine, 'collisionStart', (e) => {
         if (pair.bodyB.obstacle) {
             pair.bodyB.obstacle.onCollide(pair.bodyA);
         }
+        // Matter.Body.setAngularVelocity(ball, 0);
     }
 })
 Matter.Events.on(engine, 'collisionEnd', (e) => {
@@ -110,6 +111,7 @@ async function setupLevel(seed = 0, callback = () => {}) {
 
         // sets the ball's bounciness. between 0 and 1
         ball.restitution = 1;
+        ball.friction = 0;
 
         // adds ball to the engine.world
         Matter.Composite.add(engine.world, [ball]);
@@ -238,9 +240,6 @@ function update() {
         return;
     }
 
-    Matter.Body.setAngularVelocity(ball, 0);
-
-
     // draw projection line while not shot
     const ballPos = vec(ball.position.x, ball.position.y);
     if (!shot) {
@@ -254,6 +253,7 @@ function update() {
 
     const diff = vec(holePos).sub(ball.position.x, ball.position.y);
     if (diff.length < 2) {
+        play('coin');
         currentLevelSeed += 1;
         setupLevel(currentLevelSeed, () => {
             gameReady = true;

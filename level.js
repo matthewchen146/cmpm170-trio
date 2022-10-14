@@ -31,7 +31,9 @@ class Obstacle {
     }
 
     onCollide(body) {
-        
+        if (body === ball) {
+            play('click');
+        }
     }
 
     destroy() {
