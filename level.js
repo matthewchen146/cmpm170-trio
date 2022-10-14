@@ -30,6 +30,10 @@ class Obstacle {
         color('black');
     }
 
+    onCollide(body) {
+        
+    }
+
     destroy() {
         if (this.body) {
             Matter.World.remove(engine.world, this.body);

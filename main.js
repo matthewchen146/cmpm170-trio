@@ -67,8 +67,11 @@ Matter.Events.on(engine, 'collisionStart', (e) => {
     // a pair is 2 bodies that collided
     for (const pair of e.pairs) {
         // to access the bodies, use pair.bodyA and pair.bodyB
-        if (pair.bodyA.obstacle || pair.bodyB.obstacle) {
-            play('click');
+        if (pair.bodyA.obstacle) {
+            pair.bodyA.obstacle.onCollide(pair.bodyB);
+        }
+        if (pair.bodyB.obstacle) {
+            pair.bodyB.obstacle.onCollide(pair.bodyA);
         }
     }
 })
@@ -85,7 +88,7 @@ let obstacles = [];
 
 let currentLevelSeed = 0;
 
-async function setupLevel(seed = 0) {
+async function setupLevel(seed = 0, callback = () => {}) {
 
     gameReady = false;
 
@@ -117,7 +120,8 @@ async function setupLevel(seed = 0) {
         Matter.Body.setVelocity(ball, {x: 0, y: 0});
     }
 
-    gameReady = true;
+    // gameReady = true;
+    callback();
 }
 
 
@@ -128,7 +132,7 @@ function update() {
         
         currentLevelSeed = 0;
 
-        setupLevel(currentLevelSeed);        
+        setupLevel(currentLevelSeed);
 
         // this variable is to prevent you from holding input after pressing start
         // it is set to true after the first input release
@@ -156,9 +160,9 @@ function update() {
     }
 
     
-    if (!gameReady) {
-        return;
-    }
+    // if (!gameReady) {
+    //     return;
+    // }
 
 
     //
@@ -230,6 +234,13 @@ function update() {
     }
     
 
+    if (!ball) {
+        return;
+    }
+
+    Matter.Body.setAngularVelocity(ball, 0);
+
+
     // draw projection line while not shot
     const ballPos = vec(ball.position.x, ball.position.y);
     if (!shot) {
@@ -244,7 +255,9 @@ function update() {
     const diff = vec(holePos).sub(ball.position.x, ball.position.y);
     if (diff.length < 2) {
         currentLevelSeed += 1;
-        setupLevel(currentLevelSeed);
+        setupLevel(currentLevelSeed, () => {
+            gameReady = true;
+        });
     } else if (diff.length < 6) {
         const dir = vec(diff).normalize().mul(.00001 * (1 - diff.length / 6));
         Matter.Body.applyForce(ball, ball.position, {x: dir.x, y: dir.y})
