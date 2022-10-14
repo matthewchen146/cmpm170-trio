@@ -1,4 +1,4 @@
-title = "Pool Game";
+title = "Golf Game";
 
 description = `
 [Hold] Charge Ball
